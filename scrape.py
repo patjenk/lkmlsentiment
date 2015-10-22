@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+from json import dumps
 import requests
 import urlparse
 
@@ -17,7 +18,7 @@ def scrape():
     start_datetime = datetime(year=2010, month=1, day=1, hour=0, minute=0, second=0)
     base_url = "https://lkml.org/lkml/{year}/{month}/{day}"
 
-    for day_count in [0]:
+    for day_count in range(0,10):
         current_datetime = start_datetime + timedelta(days=day_count)
         lkml_archive_day_url = base_url.format(year=current_datetime.year, month=current_datetime.month, day=current_datetime.day)
         lkml_day_message_set = set()
@@ -31,10 +32,26 @@ def scrape():
                 message_http_request = requests.get(message_archive_url)
                 message_soup = BeautifulSoup(message_http_request.text, "html.parser")
                 try:
-                    subject = message_soup.findAll("td", text="Subject")[0].findNext("td").text
+                    message_subject = message_soup.findAll("td", text="Subject")[0].findNext("td").text
+                    message_date = message_soup.findAll("td", text="Date")[0].findNext("td").text
+                    message_sender = message_soup.findAll("td", text="From")[0].findNext("td").text
+                    message_body_element = message_soup.findAll("pre", attrs = {'itemprop': 'articleBody'})[0]
+                    message_body = ""
+                    for element in message_body_element.children:
+                        line_content = str(element)
+                        if "<br/>" == line_content:
+                            message_body += "\n"
+                        else:
+                            message_body += line_content
                 except:
                     continue
-                print message_archive_url, subject
+                data = {
+                    'subject': message_subject,
+                    'data': message_date,
+                    'sender': message_sender,
+                    'body': message_body
+                        }
+                print dumps(data)
 
 
 if __name__ == "__main__":
