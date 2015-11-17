@@ -51,7 +51,10 @@ def scrape():
                     'sender': message_sender,
                     'body': message_body
                         }
-                print dumps(data)
+                filename = tag_href[1:].replace("/",".") + ".email.json"
+                fh = open("archive/" + filename, "w")
+                fh.write(dumps(data))
+                fh.close()
 
 
 if __name__ == "__main__":
