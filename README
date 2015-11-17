@@ -1,1 +1,6 @@
 an attempt to analyze the LKML for sentiment and how nice people are to each other.
+
+# Scraping and Building a Local Archive
+Creates and populates 'archive/' with lkml data.
+
+`python scrape.py`
