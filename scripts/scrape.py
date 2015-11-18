@@ -8,6 +8,7 @@ import urlparse
 
 def make_link_absolute(unabsolute_url, base_url):
     """
+    Take in a relative link and a base url and return an absolute link.
     Taken from http://stackoverflow.com/questions/4468410/python-beautifulsoup-equivalent-to-lxml-make-links-absolute
     """
     return urlparse.urljoin(base_url, unabsolute_url)
@@ -15,11 +16,10 @@ def make_link_absolute(unabsolute_url, base_url):
 
 def scrape():
     """
-    roll through lmkl.org and start saving the archive locally.
+    Roll through lmkl.org and start saving the archive locally.
     """
     archive_dir = "archive/"
-
-    start_datetime = datetime(year=2010, month=1, day=1, hour=0, minute=0, second=0)
+    start_datetime = datetime(year=2012, month=12, day=23, hour=0, minute=0, second=0)
     base_url = "http://lkml.org/lkml/{year}/{month}/{day}"
 
     try:
@@ -27,7 +27,7 @@ def scrape():
     except:
         os.mkdir(archive_dir)
 
-    for day_count in range(0,10):
+    for day_count in range(0,1):
         current_datetime = start_datetime + timedelta(days=day_count)
         print "Archiving {}".format(current_datetime.strftime("%Y-%m-%d"))
         lkml_archive_day_url = base_url.format(year=current_datetime.year, month=current_datetime.month, day=current_datetime.day)
@@ -57,7 +57,7 @@ def scrape():
                     continue
                 data = {
                     'subject': message_subject,
-                    'data': message_date,
+                    'date': message_date,
                     'sender': message_sender,
                     'body': message_body
                         }
